@@ -481,7 +481,7 @@ async fn upload_image(
                     .unwrap_or_default();
                 let orig_name = field
                     .content_disposition()
-                    .get_filename()
+                    .and_then(|cd| cd.get_filename())
                     .unwrap_or("upload.bin")
                     .to_string();
                 file_data = Some((buf.to_vec(), orig_name, content_type));
