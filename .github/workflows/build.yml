@@ -12,17 +12,20 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@v4
 
-      - name: 🦀 Install Rust
+      - name: 🦀 安装 Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: ⚡ Cache cargo
+      - name: ⚡ 缓存依赖
         uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: app
 
-      - name: 📦 Build
+      - name: 📦 构建 release
         run: cargo build --release
+        working-directory: app
 
-      - name: 📤 Upload artifact
+      - name: 📤 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: image-gallery
-          path: target/release/
+          path: app/target/release/
