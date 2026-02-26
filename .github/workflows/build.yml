@@ -45,7 +45,7 @@ jobs:
       - name: 📦 打包
         run: |
           mkdir dist
-          cp app/target/${{ matrix.target }}/release/* dist/
+          cp app/target/${{ matrix.target }}/release/image-gallery* dist/
         shell: bash
 
       - name: ⬆ 上传构建产物
