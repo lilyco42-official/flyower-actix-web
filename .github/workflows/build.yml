@@ -1,0 +1,28 @@
+name: Build Rust
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🦀 Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: ⚡ Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: 📦 Build
+        run: cargo build --release
+
+      - name: 📤 Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-gallery
+          path: target/release/
