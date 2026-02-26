@@ -41,7 +41,8 @@ jobs:
       - name: 📦 构建
         run: cargo build --release --target ${{ matrix.target }}
         working-directory: app
-
+      - name: 🔍 查看生成文件
+        run: ls app/target/${{ matrix.target }}/release/
       - name: 📦 打包
         run: |
           mkdir dist
