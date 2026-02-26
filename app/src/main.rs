@@ -1,13 +1,12 @@
 use actix_files::Files;
 use actix_multipart::Multipart;
 use actix_web::{
-    delete, get, middleware, post,
+    delete, get, post,
     web::{self, Data, Json, Path, Query},
     App, HttpRequest, HttpResponse, HttpServer, Responder,
 };
 use bcrypt::{hash, verify, DEFAULT_COST};
 use bytes::BytesMut;
-use chrono::Utc;
 use futures_util::StreamExt;
 use image::ImageReader;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
@@ -41,7 +40,7 @@ impl Db {
             .unwrap();
         Self(Mutex::new(conn))
     }
-    fn lock(&self) -> std::sync::MutexGuard<Connection> {
+    fn lock(&self) -> std::sync::MutexGuard<'_, Connection> {
         self.0.lock().unwrap()
     }
 }
