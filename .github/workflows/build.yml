@@ -1,31 +1,55 @@
-name: Build Rust
+name: Release Build
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - "v*"
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            name: linux
+
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            name: windows
+
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            name: macos
 
     steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: 🦀 安装 Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
 
-      - name: ⚡ 缓存依赖
+      - name: ⚡ 缓存
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: app
 
-      - name: 📦 构建 release
-        run: cargo build --release
+      - name: 📦 构建
+        run: cargo build --release --target ${{ matrix.target }}
         working-directory: app
 
-      - name: 📤 上传构建产物
+      - name: 📦 打包
+        run: |
+          mkdir dist
+          cp app/target/${{ matrix.target }}/release/* dist/
+        shell: bash
+
+      - name: ⬆ 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: image-gallery
-          path: app/target/release/
+          name: image-gallery-${{ matrix.name }}
+          path: dist
