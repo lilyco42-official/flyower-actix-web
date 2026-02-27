@@ -1,0 +1,249 @@
+/* ============================================
+   CLoud X — init.css
+   Aesthetic: Dark luxury / editorial glass
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Mono:wght@300;400&display=swap');
+
+/* ── Variables ── */
+:root {
+  --bg:         #0a0c10;
+  --surface:    rgba(255,255,255,0.04);
+  --border:     rgba(255,255,255,0.10);
+  --border-focus: rgba(180,150,255,0.50);
+  --text:       #e8e6f0;
+  --muted:      rgba(232,230,240,0.45);
+  --accent:     #b49aff;
+  --accent-dim: rgba(180,154,255,0.15);
+  --danger:     #ff6b6b;
+  --success:    #6bffb8;
+  --radius:     14px;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-mono:    'DM Mono', 'Courier New', monospace;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Body ── */
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg);
+  font-family: var(--font-mono);
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* Animated radial background glow */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(100,60,255,0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(180,100,255,0.12) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+  animation: bgPulse 8s ease-in-out infinite alternate;
+}
+
+@keyframes bgPulse {
+  from { opacity: 0.7; }
+  to   { opacity: 1; }
+}
+
+/* ── Main container ── */
+main {
+  position: relative;
+  z-index: 1;
+  width: 380px;
+  padding: 48px 40px 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04) inset,
+    0 32px 80px rgba(0,0,0,0.6),
+    0 0 60px rgba(100,60,255,0.08);
+  animation: cardIn 0.6s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)  scale(1); }
+}
+
+/* ── Brand heading (inject via JS or add manually) ── */
+main::before {
+  content: 'CLoud X';
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+/* ── h1 (dashboard) ── */
+h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* ── Form ── */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── Labels ── */
+label {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+
+/* ── Inputs ── */
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+  caret-color: var(--accent);
+}
+
+input::placeholder { color: rgba(232,230,240,0.20); }
+
+input:focus {
+  border-color: var(--border-focus);
+  background: rgba(180,154,255,0.05);
+  box-shadow: 0 0 0 3px rgba(180,154,255,0.10);
+}
+
+/* ── Button ── */
+button[type="submit"],
+button:not([onclick]) {
+  margin-top: 28px;
+  width: 100%;
+  padding: 13px;
+  background: var(--accent);
+  color: #0a0c10;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 24px rgba(180,154,255,0.35);
+}
+
+button[type="submit"]:hover,
+button:not([onclick]):hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px rgba(180,154,255,0.45);
+}
+
+button[type="submit"]:active,
+button:not([onclick]):active {
+  transform: translateY(0);
+  opacity: 0.75;
+}
+
+/* Logout button (has onclick) */
+button[onclick] {
+  margin-top: 20px;
+  padding: 10px 24px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+button[onclick]:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* ── Message div ── */
+#message {
+  margin-top: 16px;
+  min-height: 20px;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-align: center;
+  color: var(--muted);
+  transition: color 0.3s;
+}
+
+/* Color for success/error (use JS: messageDiv.dataset.type = 'success' | 'error') */
+#message[data-type="success"] { color: var(--success); }
+#message[data-type="error"]   { color: var(--danger); }
+
+/* ── Helper links ── */
+p {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(180,154,255,0.30);
+  transition: border-color 0.2s, opacity 0.2s;
+}
+
+a:hover {
+  opacity: 0.75;
+  border-color: var(--accent);
+}
+
+/* ── Dashboard user info ── */
+#user {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }

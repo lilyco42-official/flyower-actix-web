@@ -1,0 +1,182 @@
+/* ================ 重置与基础 ================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacOS, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #f0f0f0;
+}
+
+/* ================ 整体居中容器 ================ */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* ================ main 卡片 ================ */
+main {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem 2rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+main:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* ================ 表单标题（可选加） ================ */
+main::before {
+  content: "Cloud X";
+  display: block;
+  text-align: center;
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 1.8rem;
+  background: linear-gradient(90deg, #c3dafe, #e0f2fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ================ 表单元素 ================ */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0.35rem;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 0.95rem 1.1rem;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+/* ================ 按钮 ================ */
+button {
+  margin-top: 0.8rem;
+  padding: 1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 12px rgba(99, 102, 241, 0.4);
+}
+
+/* ================ 提示文字 / 链接 ================ */
+p {
+  text-align: center;
+  margin-top: 1.6rem;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+a {
+  color: #c4b5fd;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #ddd6fe;
+  text-decoration: underline;
+}
+
+/* ================ 消息提示 ================ */
+#message {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+  min-height: 1.3em;
+  color: #fecaca;
+  word-break: break-word;
+}
+
+/* ================ 仪表盘专用样式 ================ */
+body.dashboard body {   /* 如果给 dashboard.html 的 <body> 加 class="dashboard" */
+  background: linear-gradient(135deg, #1e293b 0%, #111827 100%);
+}
+
+h1 {
+  font-size: 2.4rem;
+  margin-bottom: 1.5rem;
+  color: #e0f2fe;
+  text-align: center;
+}
+
+#user {
+  font-size: 1.3rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  color: #c7d2fe;
+}
+
+button[onclick="logout()"] {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35);
+}
+
+button[onclick="logout()"]:hover {
+  background: linear-gradient(90deg, #dc2626, #f87171);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.5);
+}

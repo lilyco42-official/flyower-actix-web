@@ -11,3 +11,6 @@ target/
 
 # Windows
 *.pdb
+
+#db 
+*.db

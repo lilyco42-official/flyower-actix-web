@@ -1593,9 +1593,7 @@ async fn main() -> std::io::Result<()> {
                 )
                 .into()
             }))
-            // Static files
-            .service(Files::new("/uploads", "uploads"))
-            .service(Files::new("/", "public").index_file("index.html"))
+            
             // Auth
             .service(sign_up)
             .service(sign_in)
@@ -1633,6 +1631,9 @@ async fn main() -> std::io::Result<()> {
             .service(admin_ban_user)
             .service(admin_set_role)
             .service(admin_delete_user)
+            // Static files
+            .service(Files::new("/uploads", "uploads"))
+            .service(Files::new("/", "public").index_file("index.html"))
     })
     .bind("0.0.0.0:3000")?
     .run()

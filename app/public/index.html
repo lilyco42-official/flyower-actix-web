@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lilyco42 · 图片社区</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="icon" href="./icon/favicon.ico" type="image/x-icon" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --cream:   #faf7f2;
+  --warm:    #f2ede4;
+  --nude:    #e8ddd0;
+  --blush:   #d4a5a5;
+  --rose:    #b87070;
+  --clay:    #8b5e5e;
+  --ink:     #2d2420;
+  --ink2:    #6b5c58;
+  --ink3:    #a49490;
+  --white:   #ffffff;
+  --shadow:  rgba(45,36,32,.08);
+  --r:       16px;
+  --nav-h:   62px;
+  --font-serif: 'Cormorant Garamond', 'Noto Serif SC', serif;
+  --font-sans:  'Noto Sans SC', sans-serif;
+}
+html { scroll-behavior:smooth; background:var(--cream); }
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+button { cursor:pointer; border:none; font-family:inherit; }
+a { text-decoration:none; color:inherit; }
+img { display:block; max-width:100%; }
+input, textarea, select {
+  font-family: inherit;
+  outline: none;
+}
+
+/* ── Grain overlay (subtle texture) ──────────────────── */
+body::before {
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:9998;
+  opacity:.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+/* ── Nav ──────────────────────────────────────────────── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  height: var(--nav-h);
+  background: rgba(250,247,242,.88);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--nude);
+  display: flex; align-items: center; gap:16px; padding: 0 24px;
+}
+
+.logo {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-style: italic;
+  color: var(--clay);
+  letter-spacing:.5px;
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 6px;
+}
+.logo span { font-style:normal; font-size:.7rem; color:var(--ink3); font-family:var(--font-sans); }
+
+/* search */
+.search-bar {
+  flex:1; max-width:420px;
+  display:flex; align-items:center;
+  background: var(--white);
+  border: 1.5px solid var(--nude);
+  border-radius: 40px;
+  padding: 0 6px 0 16px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.search-bar:focus-within {
+  border-color: var(--blush);
+  box-shadow: 0 0 0 3px rgba(212,165,165,.18);
+}
+.search-bar input {
+  flex:1; background:none; border:none;
+  font-size:13px; color:var(--ink); padding:9px 0;
+}
+.search-bar input::placeholder { color:var(--ink3); }
+.search-bar .search-btn {
+  background: var(--blush); color:#fff;
+  border-radius: 30px; padding:5px 14px;
+  font-size:12px; font-weight:500;
+  transition: background .15s;
+  flex-shrink:0;
+}
+.search-bar .search-btn:hover { background:var(--rose); }
+
+/* sort tabs */
+.sort-tabs {
+  display:flex; gap:2px;
+  background: var(--warm);
+  border-radius:30px; padding:3px;
+  border:1px solid var(--nude);
+}
+.sort-tab {
+  background:none; border:none;
+  border-radius: 25px; padding: 5px 14px;
+  font-size:12px; color:var(--ink2); font-family:inherit;
+  transition: all .18s;
+  white-space:nowrap;
+}
+.sort-tab.active {
+  background: var(--white);
+  color: var(--clay);
+  font-weight:500;
+  box-shadow: 0 1px 4px var(--shadow);
+}
+.sort-tab:hover:not(.active) { color:var(--ink); }
+
+/* nav right */
+.nav-right { display:flex; gap:8px; align-items:center; margin-left:auto; flex-shrink:0; }
+.btn-ghost {
+  background:none;
+  border:1.5px solid var(--nude);
+  border-radius:30px; padding:6px 16px;
+  font-size:12px; color:var(--ink2);
+  transition:all .15s; font-family:inherit;
+  display:inline-flex; align-items:center; gap:5px;
+}
+.btn-ghost:hover { border-color:var(--blush); color:var(--clay); }
+.btn-primary {
+  background: var(--clay); color:#fff;
+  border-radius:30px; padding:7px 18px;
+  font-size:12px; font-weight:500; font-family:inherit;
+  transition: background .15s;
+  display:inline-flex; align-items:center; gap:5px;
+}
+.btn-primary:hover { background:var(--rose); }
+.user-chip {
+  display:flex; align-items:center; gap:8px;
+  padding:4px 12px 4px 6px;
+  border:1.5px solid var(--nude);
+  border-radius:30px; cursor:pointer;
+  transition:all .15s;
+}
+.user-chip:hover { border-color:var(--blush); }
+.user-chip .av {
+  width:28px; height:28px; border-radius:50%;
+  background: linear-gradient(135deg, var(--blush), var(--rose));
+  color:#fff; font-size:12px; font-weight:600;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.user-chip .uname { font-size:12px; color:var(--ink2); font-weight:500; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* ── Search badge ─────────────────────────────────────── */
+.search-badge {
+  display:none; align-items:center; gap:10px;
+  padding:8px 24px;
+  background: var(--warm);
+  border-bottom:1px solid var(--nude);
+  font-size:12px; color:var(--ink3);
+}
+.search-badge.on { display:flex; }
+.search-badge strong { color:var(--clay); font-weight:500; }
+.search-badge .clr {
+  margin-left:auto; background:none; border:none;
+  color:var(--ink3); font-size:16px; line-height:1;
+  padding:0 2px;
+  transition:color .15s;
+}
+.search-badge .clr:hover { color:var(--rose); }
+
+/* ── Main layout ──────────────────────────────────────── */
+main { padding-top: var(--nav-h); }
+
+/* ── Hero strip (shows when no search) ───────────────── */
+.hero-strip {
+  background: linear-gradient(135deg, #f5e6e0 0%, #ede0d4 40%, #e8d5c8 100%);
+  border-bottom: 1px solid var(--nude);
+  padding: 28px 24px 24px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.hero-text h1 {
+  font-family: var(--font-serif);
+  font-size: 2rem; font-style:italic;
+  color: var(--clay);
+  line-height:1.1;
+  margin-bottom:6px;
+}
+.hero-text p { font-size:13px; color:var(--ink2); }
+.hero-strip.hidden { display:none; }
+
+/* ── Masonry grid ─────────────────────────────────────── */
+.grid-wrap { padding: 18px 16px 0; }
+.masonry {
+  column-count: 5;
+  column-gap: 10px;
+}
+@media(max-width:1400px){.masonry{column-count:4}}
+@media(max-width:1100px){.masonry{column-count:3}}
+@media(max-width:700px) {.masonry{column-count:2}}
+
+/* ── Card ────────────────────────────────────────────── */
+.card {
+  break-inside:avoid;
+  margin-bottom:10px;
+  border-radius:var(--r);
+  overflow:hidden;
+  background:var(--white);
+  position:relative;
+  cursor:pointer;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .22s;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(139,94,94,.14);
+}
+.card-img {
+  width:100%; display:block;
+  background:var(--warm);
+}
+/* skeleton shimmer while loading */
+.card-img.loading {
+  min-height:160px;
+  animation: shimmer 1.4s infinite;
+  background: linear-gradient(90deg, var(--warm) 25%, var(--nude) 50%, var(--warm) 75%);
+  background-size: 200% 100%;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+.card-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(45,36,32,.72) 0%, rgba(45,36,32,.1) 45%, transparent 70%);
+  opacity:0; transition:opacity .2s;
+  display:flex; flex-direction:column; justify-content:flex-end; padding:12px;
+}
+.card:hover .card-overlay { opacity:1; }
+.card-title {
+  font-size:12px; font-weight:500; color:#fff;
+  margin-bottom:8px;
+  text-shadow: 0 1px 4px rgba(0,0,0,.3);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.card-row {
+  display:flex; align-items:center; gap:6px;
+}
+.card-user {
+  font-size:11px; color:rgba(255,255,255,.8);
+  flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.card-btns { display:flex; gap:5px; }
+.c-btn {
+  background:rgba(255,255,255,.2); backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:8px; padding:5px 9px;
+  color:#fff; font-size:11px; font-family:inherit;
+  transition:background .15s;
+  display:flex; align-items:center; gap:3px;
+}
+.c-btn:hover { background:rgba(255,255,255,.36); }
+.c-btn.liked { color:#ffb3b3; }
+.c-btn.saved { color:#ffd6a0; }
+
+/* ── Load more ───────────────────────────────────────── */
+.lm-wrap { text-align:center; padding:32px 0 60px; }
+.lm-btn {
+  background:none;
+  border:1.5px solid var(--nude);
+  border-radius:30px; padding:10px 36px;
+  font-size:12px; color:var(--ink3);
+  font-family:inherit;
+  transition:all .15s;
+}
+.lm-btn:hover { border-color:var(--blush); color:var(--clay); }
+.lm-btn:disabled { opacity:.4; pointer-events:none; }
+
+/* ── Empty state ─────────────────────────────────────── */
+.empty {
+  padding:80px 20px; text-align:center; color:var(--ink3);
+}
+.empty .ei { font-size:48px; margin-bottom:14px; }
+.empty h3 { font-family:var(--font-serif); font-size:1.4rem; color:var(--ink2); margin-bottom:6px; }
+
+/* ── Modals ──────────────────────────────────────────── */
+.modal-bg {
+  display:none; position:fixed; inset:0; z-index:2000;
+  background:rgba(45,36,32,.55); backdrop-filter:blur(8px);
+  align-items:center; justify-content:center; padding:20px;
+}
+.modal-bg.on { display:flex; }
+.modal {
+  background:var(--white);
+  border-radius:20px;
+  padding:28px;
+  width:100%; max-width:460px;
+  max-height:90vh; overflow-y:auto;
+  position:relative;
+  box-shadow:0 24px 64px rgba(45,36,32,.18);
+  animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn {
+  from { transform:scale(.92) translateY(8px); opacity:0; }
+  to   { transform:scale(1) translateY(0); opacity:1; }
+}
+.modal-title {
+  font-family:var(--font-serif);
+  font-size:1.4rem; color:var(--clay);
+  margin-bottom:20px;
+}
+.modal-close {
+  position:absolute; top:18px; right:20px;
+  background:none; border:none; font-size:20px;
+  color:var(--ink3); line-height:1;
+  transition:color .15s;
+}
+.modal-close:hover { color:var(--rose); }
+
+/* Form elements */
+.field { margin-bottom:14px; }
+.field label { display:block; font-size:11px; color:var(--ink3); margin-bottom:5px; font-weight:500; letter-spacing:.4px; text-transform:uppercase; }
+.field input, .field textarea, .field select {
+  width:100%; padding:10px 13px;
+  background:var(--cream); border:1.5px solid var(--nude);
+  border-radius:10px; font-size:13px; color:var(--ink);
+  transition: border-color .15s, box-shadow .15s;
+}
+.field input:focus, .field textarea:focus {
+  border-color:var(--blush);
+  box-shadow:0 0 0 3px rgba(212,165,165,.15);
+}
+.field textarea { resize:vertical; min-height:72px; }
+
+/* Drop zone */
+.drop-zone {
+  border:2px dashed var(--nude);
+  border-radius:12px; padding:30px;
+  text-align:center; cursor:pointer;
+  transition:all .2s; color:var(--ink3);
+  margin-bottom:16px; position:relative;
+}
+.drop-zone:hover, .drop-zone.over {
+  border-color:var(--blush); background:rgba(212,165,165,.05);
+  color:var(--clay);
+}
+.drop-zone input[type=file] { display:none; }
+.drop-zone .dz-icon { font-size:28px; margin-bottom:8px; }
+.drop-zone .dz-hint { font-size:12px; margin-top:4px; color:var(--ink3); }
+.drop-zone img#previewImg { display:none; max-width:100%; border-radius:8px; margin-top:10px; }
+
+/* Quota bar */
+.quota-bar {
+  height:3px; background:var(--nude); border-radius:2px;
+  overflow:hidden; margin-bottom:4px;
+}
+.quota-fill { height:100%; background:var(--blush); border-radius:2px; transition:width .4s; }
+.quota-text { font-size:11px; color:var(--ink3); }
+
+/* Collection list */
+.col-list { display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; margin-bottom:14px; }
+.col-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 14px;
+  border:1.5px solid var(--nude); border-radius:10px;
+  cursor:pointer; transition:all .15s; background:var(--cream);
+}
+.col-item:hover { border-color:var(--blush); background:var(--warm); }
+.col-item.on { border-color:var(--blush); background:rgba(212,165,165,.1); }
+.col-item .ci-check { width:18px; flex-shrink:0; font-size:14px; color:var(--ink3); }
+.col-item.on .ci-check { color:var(--rose); }
+.col-item .ci-name { flex:1; font-size:13px; font-weight:500; color:var(--ink); }
+.col-item .ci-count { font-size:11px; color:var(--ink3); }
+
+/* ── Image detail modal ───────────────────────────────── */
+.detail-wrap {
+  display:flex; gap:0; max-width:820px; width:100%;
+}
+.detail-img {
+  flex:1; background:var(--warm);
+  border-radius:16px 0 0 16px; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  min-height:280px; max-height:580px;
+}
+.detail-img img { width:100%; height:100%; object-fit:contain; }
+.detail-side {
+  width:260px; flex-shrink:0;
+  background:var(--white);
+  border:1.5px solid var(--nude); border-left:none;
+  border-radius:0 16px 16px 0;
+  padding:22px; display:flex; flex-direction:column; gap:14px;
+  overflow-y:auto;
+}
+.dt-close {
+  align-self:flex-end;
+  background:none; border:none; font-size:18px; color:var(--ink3); transition:color .15s;
+}
+.dt-close:hover { color:var(--rose); }
+.dt-title { font-family:var(--font-serif); font-size:1.2rem; color:var(--ink); line-height:1.2; }
+.dt-desc { font-size:12px; color:var(--ink2); line-height:1.6; }
+.dt-tags { display:flex; flex-wrap:wrap; gap:5px; }
+.tag-pill {
+  background:var(--warm); border:1px solid var(--nude);
+  border-radius:20px; padding:3px 10px;
+  font-size:11px; color:var(--ink3); cursor:pointer;
+  transition:all .15s;
+}
+.tag-pill:hover { border-color:var(--blush); color:var(--clay); }
+.dt-user { display:flex; align-items:center; gap:10px; }
+.dt-av {
+  width:36px; height:36px; border-radius:50%;
+  background:linear-gradient(135deg,var(--blush),var(--rose));
+  color:#fff; font-size:14px; font-weight:600;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.dt-uname { font-size:13px; font-weight:500; }
+.dt-time  { font-size:11px; color:var(--ink3); }
+.dt-actions { display:flex; gap:7px; }
+.dt-btn {
+  flex:1; padding:9px 4px;
+  border-radius:10px; font-size:12px; font-weight:500;
+  font-family:inherit; text-align:center;
+  border:1.5px solid var(--nude); background:none; color:var(--ink2);
+  transition:all .15s;
+}
+.dt-btn:hover { border-color:var(--blush); color:var(--clay); }
+.dt-btn.rose { background:var(--clay); color:#fff; border-color:var(--clay); }
+.dt-btn.rose:hover { background:var(--rose); border-color:var(--rose); }
+.dt-follow {
+  width:100%; padding:9px;
+  border-radius:10px; font-size:12px; font-weight:500;
+  font-family:inherit; text-align:center;
+  background:var(--clay); color:#fff; border:none;
+  transition:background .15s;
+}
+.dt-follow:hover { background:var(--rose); }
+.dt-follow.following { background:var(--warm); color:var(--ink3); border:1.5px solid var(--nude); }
+.dt-follow.following:hover { border-color:var(--blush); color:var(--clay); }
+
+/* ── Toast ───────────────────────────────────────────── */
+#toast {
+  position:fixed; bottom:24px; left:50%;
+  transform:translateX(-50%) translateY(72px);
+  background:var(--ink); color:#fff;
+  border-radius:30px; padding:9px 22px;
+  font-size:12px; z-index:9999;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap; pointer-events:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.2);
+}
+#toast.on { transform:translateX(-50%) translateY(0); }
+#toast.ok { background:var(--clay); }
+#toast.err { background:#b05252; }
+
+/* ── Inline new-col form ─────────────────────────────── */
+.new-col-toggle { font-size:12px; color:var(--blush); cursor:pointer; padding:4px 0; display:inline-block; }
+.new-col-form { display:none; flex-direction:column; gap:8px; margin-top:8px; padding:12px; background:var(--cream); border-radius:10px; }
+.new-col-form.on { display:flex; }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════════════ -->
+<nav>
+  <a href="/" class="logo">
+    📌 lilyco42
+    <span>图片社区</span>
+  </a>
+
+  <div class="search-bar">
+    <input id="searchInput" type="text" placeholder="搜索图片、描述…" autocomplete="off">
+    <button class="search-btn" onclick="doSearch()">搜索</button>
+  </div>
+
+  <div class="sort-tabs">
+    <button class="sort-tab active" data-sort="latest" onclick="setSort('latest',this)">最新</button>
+    <button class="sort-tab" data-sort="hot"    onclick="setSort('hot',this)">🔥 最热</button>
+    <button class="sort-tab" data-sort="random" onclick="setSort('random',this)">✦ 推荐</button>
+    <button class="sort-tab" id="tabFollowing" data-sort="following" onclick="setSort('following',this)" style="display:none">👥 关注</button>
+  </div>
+
+  <div class="nav-right">
+    <button class="btn-primary" id="btnUpload" style="display:none" onclick="openUpload()">＋ 上传</button>
+    <a href="/sign_in.html" class="btn-ghost" id="btnLogin">登录</a>
+    <div class="user-chip" id="userChip" style="display:none" onclick="goProfile()">
+      <div class="av" id="chipAv"></div>
+      <span class="uname" id="chipName"></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ SEARCH BADGE ═══════════════════════════════════ -->
+<div class="search-badge" id="searchBadge">
+  搜索结果：<strong id="badgeKw"></strong>
+  <button class="clr" onclick="clearSearch()">✕</button>
+</div>
+
+<!-- ══ MAIN ════════════════════════════════════════════ -->
+<main>
+  <div class="hero-strip" id="heroStrip">
+    <div class="hero-text">
+      <h1>发现美好，收藏灵感</h1>
+      <p>每一张图片都是一个故事的开始</p>
+    </div>
+  </div>
+
+  <div class="grid-wrap">
+    <div class="masonry" id="grid"></div>
+  </div>
+
+  <div class="lm-wrap">
+    <button class="lm-btn" id="lmBtn" onclick="loadImages()">加载更多</button>
+  </div>
+</main>
+
+<!-- ══ MODAL: 上传 ══════════════════════════════════════ -->
+<div class="modal-bg" id="mUpload">
+  <div class="modal">
+    <div class="modal-title">上传图片</div>
+    <button class="modal-close" onclick="closeM('mUpload')">✕</button>
+
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" accept="image/*" onchange="onFileChange(this)">
+      <div class="dz-icon">🖼️</div>
+      <div>点击或拖拽图片到此处</div>
+      <div class="dz-hint">JPG / PNG / WebP，单张 ≤ 10MB</div>
+      <img id="previewImg" alt="">
+    </div>
+
+    <div class="quota-bar"><div class="quota-fill" id="quotaFill"></div></div>
+    <div class="quota-text" id="quotaText">—</div>
+
+    <div class="field" style="margin-top:14px">
+      <label>标题</label>
+      <input id="upTitle" type="text" placeholder="给图片起个名字…">
+    </div>
+    <div class="field">
+      <label>描述</label>
+      <textarea id="upDesc" placeholder="描述一下这张图片…"></textarea>
+    </div>
+    <div class="field">
+      <label>标签 <span style="color:var(--ink3);text-transform:none;font-size:11px">（逗号分隔）</span></label>
+      <input id="upTags" type="text" placeholder="风景, 旅行, 日落…">
+    </div>
+
+    <button class="btn-primary" style="width:100%;justify-content:center;padding:11px" onclick="doUpload()">上传</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: 收藏 ══════════════════════════════════════ -->
+<div class="modal-bg" id="mCollect">
+  <div class="modal">
+    <div class="modal-title">保存到收藏夹</div>
+    <button class="modal-close" onclick="closeM('mCollect')">✕</button>
+
+    <div class="col-list" id="colList">
+      <div style="color:var(--ink3);text-align:center;padding:20px">加载中…</div>
+    </div>
+
+    <div>
+      <span class="new-col-toggle" onclick="this.nextElementSibling.classList.toggle('on')">＋ 新建收藏夹</span>
+      <div class="new-col-form" id="newColForm">
+        <input type="text" id="newColName" placeholder="收藏夹名称" style="padding:8px 12px;border:1.5px solid var(--nude);border-radius:8px;font-size:13px;color:var(--ink);background:var(--cream)">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--ink2)">
+          <input type="checkbox" id="newColPub" checked> 公开
+        </label>
+        <button class="btn-primary" style="padding:8px;justify-content:center" onclick="doCreateCol()">创建并收藏</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: 图片详情 ══════════════════════════════════ -->
+<div class="modal-bg" id="mDetail" style="padding:16px">
+  <div class="detail-wrap modal" style="padding:0;max-width:820px;animation:popIn .3s cubic-bezier(.34,1.56,.64,1)">
+    <div class="detail-img" id="dtImgWrap">
+      <img id="dtImg" alt="">
+    </div>
+    <div class="detail-side">
+      <button class="dt-close" onclick="closeM('mDetail')">✕</button>
+      <div class="dt-title" id="dtTitle"></div>
+      <div class="dt-desc"  id="dtDesc"></div>
+      <div class="dt-tags"  id="dtTags"></div>
+      <div class="dt-user">
+        <div class="dt-av" id="dtAv"></div>
+        <div>
+          <div class="dt-uname" id="dtUname"></div>
+          <div class="dt-time"  id="dtTime"></div>
+        </div>
+      </div>
+      <button class="dt-follow" id="dtFollowBtn" style="display:none" onclick="doFollow()"></button>
+      <div class="dt-actions">
+        <button class="dt-btn" id="dtLikeBtn" onclick="doDetailLike()">♥ <span id="dtLikeN">0</span></button>
+        <button class="dt-btn rose" onclick="openCollect()">⊕ 收藏</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ── State ───────────────────────────────────────────── */
+let page = 1, sort = 'latest', q = '', tag = '', hasMore = true, busy = false;
+let me = null, detailImg = null, collectId = null;
+const tk = () => localStorage.getItem('token');
+
+/* ── Boot ────────────────────────────────────────────── */
+(async () => {
+  await fetchMe();
+  await loadImages(true);
+  initInfiniteScroll();
+  initDrop();
+  document.getElementById('searchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doSearch();
+  });
+  // close modals on backdrop click
+  document.querySelectorAll('.modal-bg').forEach(bg =>
+    bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('on'); })
+  );
+})();
+
+/* ── Auth ────────────────────────────────────────────── */
+async function fetchMe() {
+  if (!tk()) return;
+  try {
+    const r = await fetch('/me', { headers: auth() });
+    if (!r.ok) { localStorage.removeItem('token'); return; }
+    me = await r.json();
+    document.getElementById('btnLogin').style.display   = 'none';
+    document.getElementById('btnUpload').style.display  = '';
+    document.getElementById('userChip').style.display   = 'flex';
+    document.getElementById('tabFollowing').style.display = '';
+    document.getElementById('chipName').textContent = me.username;
+    document.getElementById('chipAv').textContent   = me.username[0].toUpperCase();
+  } catch {}
+}
+
+function auth() { return { Authorization: `Bearer ${tk()}` }; }
+function goProfile() { if (me) location.href = `/user.html?u=${me.username}`; }
+
+/* ── Load images ─────────────────────────────────────── */
+async function loadImages(reset = false) {
+  if (busy || (!reset && !hasMore)) return;
+  if (reset) {
+    page = 1; hasMore = true;
+    document.getElementById('grid').innerHTML = '';
+    document.getElementById('lmBtn').disabled = false;
+    document.getElementById('lmBtn').textContent = '加载更多';
+  }
+  busy = true;
+
+  let url;
+  if (sort === 'following') {
+    url = `/feed/following?page=${page}&limit=20`;
+  } else {
+    url = `/images?page=${page}&limit=20&sort=${sort}`;
+    if (q) url += `&q=${encodeURIComponent(q)}`;
+    if (tag) url += `&tag=${encodeURIComponent(tag)}`;
+  }
+
+  const headers = tk() ? auth() : {};
+  try {
+    const r = await fetch(url, { headers });
+    const d = await r.json();
+    const imgs = d.images || [];
+    imgs.forEach(appendCard);
+    if (imgs.length < 20) {
+      hasMore = false;
+      const btn = document.getElementById('lmBtn');
+      btn.disabled = true;
+      btn.textContent = imgs.length === 0 && page === 1 ? '暂无图片' : '已加载全部 ✦';
+      if (imgs.length === 0 && page === 1) showEmpty();
+    }
+    page++;
+  } catch { toast('加载失败', 'err'); }
+  busy = false;
+}
+
+function showEmpty() {
+  document.getElementById('grid').innerHTML = `
+    <div class="empty" style="column-span:all">
+      <div class="ei">🌸</div>
+      <h3>这里还很安静</h3>
+      <p style="color:var(--ink3);margin-top:6px">成为第一个上传图片的人吧</p>
+    </div>`;
+}
+
+/* ── Append card ─────────────────────────────────────── */
+function appendCard(img) {
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.dataset.id = img.id;
+
+  const image = document.createElement('img');
+  image.className = 'card-img';
+  image.alt = img.title || '';
+  image.loading = 'lazy';
+  if (img.width && img.height) image.style.aspectRatio = `${img.width}/${img.height}`;
+  image.src = `/uploads/${img.filename}`;
+
+  const ov = document.createElement('div');
+  ov.className = 'card-overlay';
+
+  const likedClass = img.liked ? ' liked' : '';
+  ov.innerHTML = `
+    <div class="card-title">${esc(img.title || '无标题')}</div>
+    <div class="card-row">
+      <span class="card-user">@${esc(img.username)}</span>
+      <div class="card-btns">
+        <button class="c-btn${likedClass}" data-like="${img.id}" onclick="event.stopPropagation();cardLike(${img.id},this)">
+          ♥ <span class="lc">${img.like_count||0}</span>
+        </button>
+        <button class="c-btn" onclick="event.stopPropagation();openCollect(${img.id})">⊕</button>
+      </div>
+    </div>`;
+
+  el.appendChild(image);
+  el.appendChild(ov);
+  el.addEventListener('click', () => openDetail(img.id));
+  document.getElementById('grid').appendChild(el);
+}
+
+/* ── Search ──────────────────────────────────────────── */
+function doSearch() {
+  q = document.getElementById('searchInput').value.trim();
+  tag = '';
+  const badge = document.getElementById('searchBadge');
+  const kw    = document.getElementById('badgeKw');
+  if (q) {
+    badge.classList.add('on');
+    kw.textContent = q;
+    document.getElementById('heroStrip').classList.add('hidden');
+  } else {
+    badge.classList.remove('on');
+    document.getElementById('heroStrip').classList.remove('hidden');
+  }
+  loadImages(true);
+}
+
+function clearSearch() {
+  q = ''; tag = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchBadge').classList.remove('on');
+  document.getElementById('heroStrip').classList.remove('hidden');
+  loadImages(true);
+}
+
+function searchByTag(t) {
+  tag = t; q = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchBadge').classList.add('on');
+  document.getElementById('badgeKw').textContent = '#' + t;
+  document.getElementById('heroStrip').classList.add('hidden');
+  closeM('mDetail');
+  loadImages(true);
+}
+
+/* ── Sort ────────────────────────────────────────────── */
+function setSort(s, btn) {
+  if (s === 'following' && !me) { toast('请先登录', 'err'); return; }
+  sort = s;
+  document.querySelectorAll('.sort-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadImages(true);
+}
+
+/* ── Infinite scroll ─────────────────────────────────── */
+function initInfiniteScroll() {
+  window.addEventListener('scroll', () => {
+    if (!busy && hasMore && window.innerHeight + scrollY >= document.body.offsetHeight - 320)
+      loadImages();
+  });
+}
+
+/* ── Like (card) ─────────────────────────────────────── */
+async function cardLike(id, btn) {
+  if (!tk()) { location.href='/sign_in.html'; return; }
+  const r = await fetch(`/images/${id}/like`, { method:'POST', headers:auth() });
+  const d = await r.json();
+  btn.classList.toggle('liked', d.liked);
+  btn.querySelector('.lc').textContent = d.like_count;
+  toast(d.liked ? '已点赞 ♥' : '取消点赞', d.liked ? 'ok' : '');
+}
+
+/* ── Detail modal ────────────────────────────────────── */
+async function openDetail(id) {
+  const r = await fetch(`/images/${id}`, { headers: tk() ? auth() : {} });
+  const img = await r.json();
+  detailImg = img;
+
+  document.getElementById('dtImg').src = `/uploads/${img.filename}`;
+  document.getElementById('dtTitle').textContent = img.title || '（无标题）';
+  document.getElementById('dtDesc').textContent  = img.description || '';
+  document.getElementById('dtLikeN').textContent = img.like_count || 0;
+  document.getElementById('dtAv').textContent    = img.username[0].toUpperCase();
+  document.getElementById('dtUname').textContent = img.username;
+  document.getElementById('dtTime').textContent  = fmtDate(img.created_at);
+
+  // Tags
+  document.getElementById('dtTags').innerHTML = (img.tags || [])
+    .map(t => `<span class="tag-pill" onclick="searchByTag('${esc(t)}')">#${esc(t)}</span>`)
+    .join('');
+
+  // Like btn state
+  const lbtn = document.getElementById('dtLikeBtn');
+  lbtn.style.color = img.liked ? 'var(--rose)' : '';
+
+  // Follow btn
+  const fbtn = document.getElementById('dtFollowBtn');
+  if (me && me.username !== img.username) {
+    fbtn.style.display = 'block';
+    fbtn.dataset.uname = img.username;
+    const ur = await fetch(`/users/${encodeURIComponent(img.username)}`, { headers: auth() });
+    const ud = await ur.json();
+    const following = ud.user?.is_following;
+    fbtn.textContent = following ? '已关注' : '＋ 关注';
+    fbtn.className   = 'dt-follow' + (following ? ' following' : '');
+  } else {
+    fbtn.style.display = 'none';
+  }
+
+  openM('mDetail');
+}
+
+async function doDetailLike() {
+  if (!tk()) { location.href='/sign_in.html'; return; }
+  const r = await fetch(`/images/${detailImg.id}/like`, { method:'POST', headers:auth() });
+  const d = await r.json();
+  document.getElementById('dtLikeN').textContent = d.like_count;
+  document.getElementById('dtLikeBtn').style.color = d.liked ? 'var(--rose)' : '';
+  // sync card
+  const cardBtn = document.querySelector(`[data-id="${detailImg.id}"] [data-like]`);
+  if (cardBtn) {
+    cardBtn.classList.toggle('liked', d.liked);
+    cardBtn.querySelector('.lc').textContent = d.like_count;
+  }
+  toast(d.liked ? '已点赞 ♥' : '取消点赞', d.liked ? 'ok' : '');
+}
+
+/* ── Follow ──────────────────────────────────────────── */
+async function doFollow() {
+  if (!tk()) { location.href='/sign_in.html'; return; }
+  const btn  = document.getElementById('dtFollowBtn');
+  const uname = btn.dataset.uname;
+  const r = await fetch(`/users/${encodeURIComponent(uname)}/follow`, { method:'POST', headers:auth() });
+  const d = await r.json();
+  btn.textContent = d.followed ? '已关注' : '＋ 关注';
+  btn.className   = 'dt-follow' + (d.followed ? ' following' : '');
+  toast(d.followed ? `已关注 @${uname}` : `已取关 @${uname}`, d.followed ? 'ok' : '');
+}
+
+/* ── Collect ─────────────────────────────────────────── */
+function openCollect(imgId) {
+  if (!tk()) { location.href='/sign_in.html'; return; }
+  collectId = imgId || (detailImg && detailImg.id);
+  if (!collectId) return;
+  openM('mCollect');
+  loadColList();
+}
+
+async function loadColList() {
+  const list = document.getElementById('colList');
+  list.innerHTML = '<div style="color:var(--ink3);text-align:center;padding:20px">加载中…</div>';
+
+  const [cr, sr] = await Promise.all([
+    fetch('/me/collections',                      { headers:auth() }),
+    fetch(`/images/${collectId}/my-collections`,  { headers:auth() })
+  ]);
+  const cols    = (await cr.json()).collections || [];
+  const statMap = {};
+  ((await sr.json()).collections || []).forEach(c => statMap[c.id] = c.collected);
+
+  if (!cols.length) {
+    list.innerHTML = '<div style="color:var(--ink3);text-align:center;padding:20px;font-size:13px">还没有收藏夹，在下方新建一个吧 ↓</div>';
+    return;
+  }
+  list.innerHTML = '';
+  cols.forEach(col => {
+    const item = document.createElement('div');
+    item.className = 'col-item' + (statMap[col.id] ? ' on' : '');
+    item.innerHTML = `
+      <span class="ci-check">${statMap[col.id] ? '✦' : '○'}</span>
+      <span class="ci-name">${esc(col.name)}</span>
+      <span class="ci-count">${col.image_count} 张</span>`;
+    item.onclick = async () => {
+      const r = await fetch(`/collections/${col.id}/images`, {
+        method:'POST',
+        headers:{...auth(),'Content-Type':'application/json'},
+        body:JSON.stringify({image_id:collectId})
+      });
+      const d = await r.json();
+      if (d.removed) {
+        item.classList.remove('on');
+        item.querySelector('.ci-check').textContent='○';
+        toast('已移除收藏');
+      } else {
+        item.classList.add('on');
+        item.querySelector('.ci-check').textContent='✦';
+        toast('已收藏 ✦','ok');
+      }
+    };
+    list.appendChild(item);
+  });
+}
+
+async function doCreateCol() {
+  const name = document.getElementById('newColName').value.trim();
+  if (!name) { toast('请输入名称','err'); return; }
+  const isPublic = document.getElementById('newColPub').checked;
+  const r = await fetch('/collections', {
+    method:'POST',
+    headers:{...auth(),'Content-Type':'application/json'},
+    body:JSON.stringify({name, is_public:isPublic})
+  });
+  const d = await r.json();
+  if (d.success) {
+    await fetch(`/collections/${d.collectionId}/images`, {
+      method:'POST',
+      headers:{...auth(),'Content-Type':'application/json'},
+      body:JSON.stringify({image_id:collectId})
+    });
+    document.getElementById('newColName').value='';
+    document.getElementById('newColForm').classList.remove('on');
+    toast('已创建并收藏 ✦','ok');
+    loadColList();
+  }
+}
+
+/* ── Upload ──────────────────────────────────────────── */
+async function openUpload() {
+  if (!tk()) { location.href='/sign_in.html'; return; }
+  // fetch quota
+  const r = await fetch('/me/upload-quota', { headers:auth() });
+  const d = await r.json();
+  const pct = Math.min(100, (d.used / d.limit) * 100);
+  document.getElementById('quotaFill').style.width = pct + '%';
+  document.getElementById('quotaText').textContent =
+    `今日已用 ${d.usedMB} / 50 MB · 剩余 ${d.remainingMB} MB`;
+  openM('mUpload');
+}
+
+function onFileChange(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('previewImg');
+    img.src = e.target.result;
+    img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function initDrop() {
+  const zone = document.getElementById('dropZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('over');
+    const f = e.dataTransfer.files[0];
+    if (!f) return;
+    const dt = new DataTransfer(); dt.items.add(f);
+    const input = document.getElementById('fileInput');
+    input.files = dt.files;
+    onFileChange(input);
+  });
+}
+
+async function doUpload() {
+  const file = document.getElementById('fileInput').files[0];
+  if (!file) { toast('请先选择图片','err'); return; }
+  const form = new FormData();
+  form.append('file', file);
+  form.append('title', document.getElementById('upTitle').value);
+  form.append('description', document.getElementById('upDesc').value);
+  form.append('tags', document.getElementById('upTags').value);
+  const r = await fetch('/images', { method:'POST', headers:auth(), body:form });
+  const d = await r.json();
+  if (d.success) {
+    toast('上传成功 ✦','ok');
+    closeM('mUpload');
+    // reset
+    document.getElementById('fileInput').value='';
+    document.getElementById('previewImg').style.display='none';
+    document.getElementById('upTitle').value='';
+    document.getElementById('upDesc').value='';
+    document.getElementById('upTags').value='';
+    loadImages(true);
+  } else {
+    toast(d.message || '上传失败','err');
+  }
+}
+
+/* ── Helpers ─────────────────────────────────────────── */
+function openM(id)  { document.getElementById(id).classList.add('on'); }
+function closeM(id) { document.getElementById(id).classList.remove('on'); }
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function fmtDate(s) {
+  if (!s) return '';
+  return new Date(s).toLocaleDateString('zh-CN',{year:'numeric',month:'short',day:'numeric'});
+}
+
+let _tt;
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'on ' + type;
+  clearTimeout(_tt);
+  _tt = setTimeout(() => el.className='', 2600);
+}
+</script>
+</body>
+</html>

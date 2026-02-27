@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>图片社区</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f0f0f0; font-family: sans-serif; }
+
+    nav {
+      background: #fff;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      position: sticky; top: 0; z-index: 100;
+    }
+    nav h1 { font-size: 1.4rem; color: #e60023; }
+    nav input {
+      flex: 1; padding: 8px 16px;
+      border: 2px solid #eee; border-radius: 24px;
+      font-size: 14px; outline: none;
+    }
+    nav input:focus { border-color: #e60023; }
+    nav button {
+      padding: 8px 20px; background: #e60023;
+      color: #fff; border: none; border-radius: 24px;
+      cursor: pointer; font-size: 14px;
+    }
+
+    /* 瀑布流容器 */
+    .masonry {
+      column-count: 4;
+      column-gap: 12px;
+      padding: 16px;
+    }
+    @media (max-width: 1200px) { .masonry { column-count: 3; } }
+    @media (max-width: 800px)  { .masonry { column-count: 2; } }
+    @media (max-width: 480px)  { .masonry { column-count: 1; } }
+
+    .card {
+      break-inside: avoid;
+      margin-bottom: 12px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+    .card img { width: 100%; display: block; }
+    .card-info { padding: 10px 12px; }
+    .card-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 4px; }
+    .card-meta { font-size: 12px; color: #999; display: flex; justify-content: space-between; }
+    .like-btn { background: none; border: none; cursor: pointer; color: #e60023; font-size: 14px; }
+
+    /* 上传区域 */
+    .upload-zone {
+      border: 2px dashed #ccc; border-radius: 16px;
+      padding: 40px; text-align: center;
+      cursor: pointer; transition: border-color .2s;
+      margin: 16px;
+    }
+    .upload-zone:hover, .upload-zone.drag-over { border-color: #e60023; }
+    .upload-zone input { display: none; }
+
+    .modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.6); z-index: 200;
+      align-items: center; justify-content: center;
+    }
+    .modal.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 16px;
+      padding: 24px; width: 90%; max-width: 480px;
+    }
+    .modal-box input, .modal-box textarea {
+      width: 100%; margin: 8px 0; padding: 10px;
+      border: 1px solid #ddd; border-radius: 8px;
+      font-size: 14px;
+    }
+    .modal-box button { width: 100%; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <h1>📌 lilyco42 图片社区</h1>
+  <input type="text" id="searchInput" placeholder="搜索标签...">
+  <button onclick="showUpload()">+ 上传</button>
+  <button onclick="setSort('latest')">最新</button>
+  <button onclick="setSort('hot')">最热</button>
+  <button onclick="setSort('random')">推荐</button>
+  <button id="authBtn" onclick="location.href='/sign_in.html'">登录</button>
+</nav>
+
+<!-- 上传弹窗 -->
+<div class="modal" id="uploadModal">
+  <div class="modal-box">
+    <h3>上传图片</h3>
+    <div id="quotaInfo" style="font-size:13px; color:#666; margin-bottom:8px;"></div>
+    <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" accept="image/*" onchange="previewFile(this)">
+      <p id="dropText">点击或拖拽图片到此处</p>
+      <img id="previewImg" style="max-width:100%;border-radius:8px;display:none;margin-top:8px">
+    </div>
+    <input type="text" id="imgTitle" placeholder="标题">
+    <textarea id="imgDesc" placeholder="描述" rows="3"></textarea>
+    <input type="text" id="imgTags" placeholder="标签（逗号分隔，如：风景,旅行）">
+    <button style="background:#e60023;color:#fff;border:none;padding:10px;border-radius:8px;cursor:pointer"
+      onclick="uploadImage()">上传</button>
+    <button style="background:#eee;border:none;padding:10px;border-radius:8px;cursor:pointer;margin-top:4px"
+      onclick="document.getElementById('uploadModal').classList.remove('open')">取消</button>
+  </div>
+</div>
+
+<div class="masonry" id="grid"></div>
+<div style="text-align:center;padding:16px">
+  <button id="loadMore" onclick="loadImages()" 
+    style="padding:10px 32px;border-radius:24px;border:none;background:#e60023;color:#fff;cursor:pointer">
+    加载更多
+  </button>
+</div>
+
+<script>
+  let page = 1;
+  let currentTag = '';
+  const token = localStorage.getItem('token');
+
+  // 检查登录状态
+  if (token) {
+    fetch('/me', { headers: { Authorization: `Bearer ${token}` }})
+      .then(r => r.json())
+      .then(data => {
+        if (data.username) {
+          document.getElementById('authBtn').textContent = data.username;
+          document.getElementById('authBtn').onclick = 
+            () => location.href = `/user.html?u=${data.username}`;
+        }
+      });
+  }
+  // 打开上传弹窗时调用
+  async function showUploadQuota() {
+    const res = await fetch('/me/upload-quota', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    const data = await res.json();
+    document.getElementById('quotaInfo').textContent = 
+      `今日已用 ${data.usedMB}MB / 50MB，剩余 ${data.remainingMB}MB`;
+  }
+  async function loadImages(reset = false) {
+    if (reset) { page = 1; document.getElementById('grid').innerHTML = ''; }
+    const url = `/images?page=${page}&limit=20${currentTag ? '&tag='+currentTag : ''}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    data.images.forEach(img => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.onclick = () => location.href = `/image.html?id=${img.id}`;
+      card.innerHTML = `
+        <img src="/uploads/${img.filename}" alt="${img.title}" loading="lazy">
+        <div class="card-info">
+          <div class="card-title">${img.title || '无标题'}</div>
+          <div class="card-meta">
+            <span>@${img.username}</span>
+            <button class="like-btn" onclick="likeImage(event, ${img.id}, this)">
+              ❤️ ${img.like_count}
+            </button>
+          </div>
+        </div>
+      `;
+      document.getElementById('grid').appendChild(card);
+    });
+
+    if (data.images.length < 20) {
+      document.getElementById('loadMore').style.display = 'none';
+    }
+    page++;
+  }
+  async function likeImage(e, id, btn) {
+    e.stopPropagation()
+  
+    if (!token) {
+      location.href = '/sign_in.html'
+      return
+    }
+  
+    const res = await fetch(`/images/${id}/like`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  
+    const data = await res.json()
+  
+    if (!data.success) return
+  
+    // ⭐ 切换样式
+    btn.classList.toggle('liked', data.liked)
+  
+    // ⭐ 直接使用后端返回的真实数量
+    btn.innerHTML = `❤️ ${data.like_count}`
+  }
+  function showUpload() {
+    if (!token) { location.href = '/sign_in.html'; return; }
+    document.getElementById('uploadModal').classList.add('open');
+    showUploadQuota();  // 新增：打开时更新配额信息
+  }
+
+  function previewFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('previewImg').src = e.target.result;
+      document.getElementById('previewImg').style.display = 'block';
+      document.getElementById('dropText').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function uploadImage() {
+    const file = document.getElementById('fileInput').files[0];
+    if (!file) { alert('请选择图片'); return; }
+
+    const form = new FormData();
+    form.append('file', file);
+    form.append('title', document.getElementById('imgTitle').value);
+    form.append('description', document.getElementById('imgDesc').value);
+    form.append('tags', document.getElementById('imgTags').value);
+
+    const res = await fetch('/images', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: form
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('uploadModal').classList.remove('open');
+      loadImages(true); // 刷新瀑布流
+    }
+  }
+
+  // 搜索标签
+  document.getElementById('searchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      currentTag = e.target.value.trim();
+      loadImages(true);
+    }
+  });
+
+  // 拖拽上传
+  const dropZone = document.getElementById('dropZone');
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      document.getElementById('fileInput').files = e.dataTransfer.files;
+      previewFile(document.getElementById('fileInput'));
+    }
+  });
+
+  // 初始加载
+  loadImages();
+</script>
+</body>
+</html>

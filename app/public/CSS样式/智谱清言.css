@@ -1,0 +1,136 @@
+/* 全局重置与基础字体设置 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* 渐变背景，体现科技感 */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+}
+
+/* 容器卡片样式 */
+main {
+  background-color: #ffffff;
+  padding: 40px 50px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px; /* 限制最大宽度，在大屏幕上更好看 */
+  /* 移除固定高度，让内容自动撑开 */
+}
+
+/* 标题样式 (虽然登录页HTML没写h1，但仪表盘有) */
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* 表单排版 */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+}
+
+/* 输入框样式 */
+input[type="text"],
+input[type="password"] {
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.3s ease-in-out;
+  outline: none;
+}
+
+/* 输入框聚焦效果 */
+input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* 输入框占位符颜色 */
+input::placeholder {
+  color: #bbb;
+}
+
+/* 按钮样式 */
+button {
+  width: 100%;
+  padding: 12px;
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 10px;
+}
+
+/* 按钮悬停效果 */
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* 按钮点击效果 */
+button:active {
+  transform: translateY(0);
+}
+
+/* 消息提示区域 */
+#message {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 13px;
+  min-height: 20px; /* 防止内容闪动导致布局跳动 */
+  color: #e74c3c; /* 默认错误提示为红色 */
+}
+
+/* 底部链接 */
+p {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+
+a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* --- 仪表盘页面特定样式 --- */
+/* 针对仪表盘中显示用户名的 DIV */
+#user {
+  text-align: center;
+  font-size: 18px;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  color: #555;
+}

@@ -1,0 +1,14 @@
+<meta><link rel="icon" href="./icon/favicon.ico" type="image/x-icon" /></meta>
+<h2 id="title"></h2>
+<img id="img">
+
+<script>
+const id = new URLSearchParams(location.search).get('id');
+
+fetch('/images/' + id)
+  .then(r => r.json())
+  .then(data => {
+    title.innerText = data.title;
+    img.src = '/uploads/' + data.filename;
+  });
+</script>

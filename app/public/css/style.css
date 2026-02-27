@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+#feed {
+  column-count: 5;
+  column-gap: 12px;
+  padding: 12px;
+}
+
+.card {
+  break-inside: avoid;
+  margin-bottom: 12px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.card img {
+  width: 100%;
+  display: block;
+}

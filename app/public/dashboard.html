@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>仪表盘</title>
+  <link href="init.css" rel="stylesheet">
+  <link rel="icon" href="./icon/favicon.ico" type="image/x-icon" />
+  <style>
+    /* 可选的倒计时样式 */
+    #countdown { font-size: 14px; color: #666; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>欢迎！</h1>
+  <div id="user"></div>
+  <div id="countdown"></div> <!-- 显示倒计时 -->
+  <button onclick="logout()">退出登录</button>
+
+  <script>
+    async function loadUser() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/sign_in.html';
+        return;
+      }
+      const res = await fetch('/me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const user = await res.json();
+        document.getElementById('user').innerText = `你好，${user.username}`;
+        // 登录成功，开始倒计时跳转
+        startCountdown(3); 
+      } else {
+        localStorage.removeItem('token');
+        window.location.href = '/sign_in.html';
+      }
+    }
+
+    function startCountdown(seconds) {
+      const countdownEl = document.getElementById('countdown');
+      countdownEl.innerText = `${seconds} 秒后自动跳转到首页...`;
+
+      const interval = setInterval(() => {
+        seconds--;
+        if (seconds <= 0) {
+          clearInterval(interval);
+          window.location.href = '/index.html'; // 跳转到瀑布流首页
+        } else {
+          countdownEl.innerText = `${seconds} 秒后自动跳转到首页...`;
+        }
+      }, 1000);
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = '/sign_in.html';
+    }
+
+    loadUser();
+  </script>
+</body>
+</html>

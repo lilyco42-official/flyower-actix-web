@@ -1,0 +1,188 @@
+/* 全局样式重置与基础设置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 页面整体布局 */
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #333;
+}
+
+/* 主容器样式（登录/注册表单） */
+main {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  transition: all 0.3s ease;
+}
+
+main:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* 表单标题（可选，你可以在HTML中添加h1标签） */
+main h1 {
+  text-align: center;
+  margin-bottom: 1.8rem;
+  color: #4a4a68;
+  font-weight: 600;
+  font-size: 1.8rem;
+}
+
+/* 表单元素样式 */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+label {
+  font-size: 0.95rem;
+  color: #555;
+  font-weight: 500;
+  margin-bottom: -0.8rem;
+}
+
+input {
+  padding: 0.9rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+}
+
+input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* 提交按钮样式 */
+button[type="submit"] {
+  padding: 0.9rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+button[type="submit"]:hover {
+  background: #5a6edb;
+  transform: translateY(-2px);
+}
+
+button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* 提示消息样式 */
+#message {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+  min-height: 2.5rem;
+}
+
+/* 成功/失败消息的不同样式（后端返回success状态时可动态添加类） */
+#message.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+#message.error {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+/* 注册/登录跳转链接 */
+main p {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+main a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+main a:hover {
+  color: #5a6edb;
+  text-decoration: underline;
+}
+
+/* 仪表盘页面样式 */
+.dashboard-container {
+  background: #ffffff;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.dashboard-container h1 {
+  color: #4a4a68;
+  margin-bottom: 1.5rem;
+}
+
+#user {
+  font-size: 1.2rem;
+  color: #555;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+/* 退出登录按钮 */
+.dashboard-container button {
+  padding: 0.8rem 2rem;
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-container button:hover {
+  background: #d32f2f;
+}
+
+/* 响应式适配（手机端） */
+@media (max-width: 480px) {
+  main, .dashboard-container {
+    padding: 1.8rem;
+    margin: 0 1rem;
+  }
+  
+  main h1, .dashboard-container h1 {
+    font-size: 1.5rem;
+  }
+}

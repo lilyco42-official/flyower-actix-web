@@ -1,0 +1,126 @@
+/* ===== 全局 ===== */
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", "PingFang SC", sans-serif;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(135deg, #74ebf3, #9face6);
+}
+
+/* ===== 卡片容器 ===== */
+main {
+  width: 340px;
+  padding: 40px 30px;
+
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(18px);
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  color: #fff;
+}
+
+/* ===== 标题 ===== */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ===== 表单 ===== */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* label */
+label {
+  font-size: 14px;
+  margin: 10px 0 5px;
+  opacity: 0.9;
+}
+
+/* 输入框 */
+input {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+
+  transition: 0.25s;
+}
+
+input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+/* focus 动效 */
+input:focus {
+  background: rgba(255,255,255,0.3);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.4);
+}
+
+/* ===== 按钮 ===== */
+button {
+  margin-top: 20px;
+  padding: 12px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #5ee7df, #b490ca);
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+
+/* ===== 链接 ===== */
+a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ===== message 提示 ===== */
+#message {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+  min-height: 20px;
+}
+
+/* ===== 仪表盘用户信息 ===== */
+#user {
+  margin: 20px 0;
+  font-size: 18px;
+  text-align: center;
+}
+
+/* ===== 深色模式自动适配 ===== */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(135deg, #232526, #414345);
+  }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>登录 - CLoud X</title>
+  <link href="init.css" rel="stylesheet">
+</head>
+<body>
+  <main>
+    <form id="loginForm">
+      <label for="username">用户名或邮箱</label>
+      <input type="text" name="username" id="username" placeholder="用户名或邮箱" required>
+      <label for="password">密码</label>
+      <input type="password" id="password" name="password" required>
+      <button type="submit">登录</button>
+    </form>
+    <div id="message"></div>
+    <p>还没有账号？ <a href="/sign_up.html">立即注册</a></p>
+  </main>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        username: form.username.value,
+        password: form.password.value
+      };
+
+      const res = await fetch('/sign_in', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      const messageDiv = document.getElementById('message');
+      messageDiv.innerText = result.message;
+
+      if (result.success) {
+        localStorage.setItem('token', result.token);
+        window.location.href = '/dashboard.html';  // 下一步创建
+      }
+    });
+  </script>
+</body>
+</html>

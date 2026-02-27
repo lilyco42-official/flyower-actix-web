@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>注册 - CLoud X</title>
+  <link href="init.css"  rel="stylesheet" type="text/css" >
+</head>
+<body>
+  <main>
+    <form id="registerForm">
+      <label for="">用户名</label>
+      <input type="text" id="username" name="username" placeholder="输入用户名" required>
+      
+      <label for="password">密码</label>
+      <input type="password" id="password" name="password" placeholder="输入密码" required>
+      <label for="email">邮箱</label>
+      <input type="email" name="email" id="email" placeholder="邮箱（可选）">
+      <label for="confirm_password">确认密码</label>
+      <input type="password" id="confirm_password" name="confirm_password" placeholder="确认密码" required>
+      
+      <button type="submit">注册</button>
+    </form>
+    <div id="message"></div>
+  </main>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        username: form.username.value,
+        password: form.password.value,
+        confirm_password: form.confirm_password.value
+      };
+
+      const res = await fetch('/sign_up', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      document.getElementById('message').innerHTML= result.message;
+      if (result.success) {
+        setTimeout(() => {
+          window.location.href = '/sign_in.html';
+        }, 2000); 
+      }
+    });
+  </script>
+</body>
+</html>

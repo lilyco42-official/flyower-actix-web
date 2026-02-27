@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户主页 - lilyco42</title>
+  <style>
+    /* 复用首页样式，可单独提取 */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f0f0f0; font-family: system-ui; }
+    nav { background: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    nav h1 { font-size: 1.4rem; color: #e60023; cursor: pointer; }
+    .container { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
+    .user-header { margin-bottom: 24px; }
+    .user-header h2 { color: #333; }
+    .masonry { column-count: 4; column-gap: 12px; }
+    @media (max-width: 800px) { .masonry { column-count: 2; } }
+    .card { break-inside: avoid; margin-bottom: 12px; border-radius: 16px; overflow: hidden; background: #fff; }
+    .card img { width: 100%; display: block; }
+    .card-info { padding: 10px 12px; }
+    .card-title { font-size: 14px; font-weight: 600; color: #333; }
+    .back { margin: 16px; }
+    .back a { color: #e60023; text-decoration: none; }
+  </style>
+</head>
+<body>
+<nav>
+  <h1 onclick="location.href='/index.html'">📌 PinBoard</h1>
+  <div style="flex:1"></div>
+  <button id="authBtn" onclick="location.href='/sign_in.html'">登录</button>
+</nav>
+
+<div class="container">
+  <div class="user-header">
+    <h2 id="usernameHeading"></h2>
+  </div>
+  <div class="masonry" id="grid"></div>
+  <div id="noImages" style="text-align:center; padding:40px; color:#999;">该用户暂无图片</div>
+</div>
+
+<script>
+  const token = localStorage.getItem('token');
+  const urlParams = new URLSearchParams(window.location.search);
+  const username = urlParams.get('u');
+
+  if (!username) {
+    location.href = '/index.html';
+  }
+
+  // 更新导航按钮
+  if (token) {
+    fetch('/me', { headers: { Authorization: `Bearer ${token}` }})
+      .then(r => r.json())
+      .then(data => {
+        if (data.username) {
+          document.getElementById('authBtn').textContent = data.username;
+          document.getElementById('authBtn').onclick = () => location.href = `/user.html?u=${data.username}`;
+        }
+      });
+  }
+
+  document.getElementById('usernameHeading').textContent = `${username} 的图片`;
+
+  async function loadUserImages() {
+    try {
+      const res = await fetch(`/users/${encodeURIComponent(username)}/images`);
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
+
+      const grid = document.getElementById('grid');
+      const noImages = document.getElementById('noImages');
+      if (data.images.length === 0) {
+        noImages.style.display = 'block';
+        return;
+      }
+      noImages.style.display = 'none';
+      data.images.forEach(img => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="/uploads/${img.filename}" alt="${img.title || ''}" loading="lazy">
+          <div class="card-info">
+            <div class="card-title">${img.title || '无标题'}</div>
+            <div>♥ ${img.like_count}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  loadUserImages();
+</script>
+</body>
+</html>
